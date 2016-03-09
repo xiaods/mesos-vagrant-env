@@ -1,0 +1,12 @@
+A Mesos development environment for Vagrant.
+
+Made for Mesos developers like me, who use OSX but need to test stuff under
+Linux from time to time. Your local Mesos source folder is mapped into the VM.
+NFS is used for the mapping to get somewhat decent speed.
+Uses Fedora 23, because it provides recent enough packages for almost all Mesos
+features.
+
+You'll need to provide the path to your local Mesos source dir in the
+Vagrantfile, maybe change mem/cpu and configure flags, and you're good to go!
+Vagrant provisioning will install all packages needed to compile Mesos and run
+as many tests as possible. Mesos build dir will be in ~/build.
