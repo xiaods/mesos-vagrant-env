@@ -40,12 +40,20 @@ Vagrant.configure(2) do |config|
     
     # Test dependencies
     dnf -y install perf nmap-ncat ethtool logrotate
-    dnf -y install docker
 
-    systemctl enable docker
+    # Docker
+    curl -fsSL https://get.docker.com/ | sh
 
     # enable overlayfs
     echo "overlay" > /etc/modules-load.d/overlayfs.conf
+    mkdir -p /etc/systemd/system/docker.service.d
+    cat > /etc/systemd/system/docker.service.d/overrides.conf <<EOF
+[Service]
+ExecStart=
+ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver=overlay
+EOF
+
+    systemctl enable docker.service
   SHELL
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
