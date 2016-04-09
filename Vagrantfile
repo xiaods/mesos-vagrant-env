@@ -35,17 +35,22 @@ Vagrant.configure(2) do |config|
     # Mesos dependencies
     dnf -y install python-boto python-devel libcurl-devel openssl-devel        \
                    cyrus-sasl-devel cyrus-sasl-md5 apr-devel subversion-devel  \
-                   apr-util-devel libevent-devel libnl3-devel redhat-rpm-config
+                   apr-util-devel libevent-devel libnl3-devel xfsprogs-devel   \
+                   libblkid-devel redhat-rpm-config
     dnf -y install java-1.8.0-openjdk-devel maven
     
     # Test dependencies
     dnf -y install perf nmap-ncat ethtool logrotate
 
+    # Enable OverlayFS
+    echo "overlay" > /etc/modules-load.d/overlayfs.conf
+
+    # Enable XFS
+    echo "xfs" > /etc/modules-load.d/xfs.conf
+
     # Docker
     curl -fsSL https://get.docker.com/ | sh
 
-    # enable overlayfs
-    echo "overlay" > /etc/modules-load.d/overlayfs.conf
     mkdir -p /etc/systemd/system/docker.service.d
     cat > /etc/systemd/system/docker.service.d/overrides.conf <<EOF
 [Service]
@@ -61,6 +66,6 @@ EOF
     mkdir build
     cd build
     /mesos/configure --enable-debug --enable-libevent --enable-ssl             \
-                     --with-network-isolator
+                     --enable-xfs-disk-isolator --with-network-isolator
   SHELL
 end
