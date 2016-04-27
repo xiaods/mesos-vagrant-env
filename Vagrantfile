@@ -30,7 +30,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     # Development tools
-    dnf -y install automake ccache cmake  gcc-c++ git patch
+    dnf -y install automake ccache cmake gcc-c++ git libtool patch
 
     # Mesos dependencies
     dnf -y install apr-devel apr-util-devel cyrus-sasl-devel cyrus-sasl-md5    \
