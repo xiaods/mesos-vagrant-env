@@ -3,7 +3,7 @@
 
 $vagrant_mem = 8192
 $vagrant_cpus = 8
-$local_mesos_dir = "../mesos"
+$local_mesos_dir = "/Users/xiaods/Documents/Code/mesos"
 
 Vagrant.configure(2) do |config|
   config.vm.box = "bento/fedora-23"
@@ -13,7 +13,8 @@ Vagrant.configure(2) do |config|
       "modifyvm", :id,
       "--memory", "#{$vagrant_mem}",
       "--cpus", "#{$vagrant_cpus}",
-      "--paravirtprovider", "kvm"
+      "--paravirtprovider", "kvm",
+      "--natdnshostresolver1", "on"
     ]
   end
 
@@ -23,10 +24,12 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.network "forwarded_port", guest: 5050, host: 5050
-  config.vm.network "private_network", type: "dhcp"
+  config.vm.network "private_network", ip: "172.28.128.3"
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.synced_folder $local_mesos_dir, "/mesos", type: "nfs"
+  config.vm.synced_folder $local_mesos_dir, "/opt/mesos", type: "nfs"
+
+  config.bindfs.bind_folder "/opt/mesos", '/mesos'
 
   config.vm.provision "shell", inline: <<-SHELL
     # Development tools
