@@ -1,12 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$vagrant_mem = 8192
-$vagrant_cpus = 8
+$vagrant_mem = 4096
+$vagrant_cpus = 2
 $local_mesos_dir = "/Users/xiaods/Documents/Code/mesos"
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "bento/fedora-23"
+  config.vm.box = "centos/7"
 
   config.vm.provider "virtualbox" do |v|
     v.customize [
@@ -33,33 +33,29 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     # Development tools
-    dnf -y install automake ccache cmake gcc-c++ git libtool patch the_silver_searcher
+    yum -y install automake ccache cmake gcc-c++ git libtool patch the_silver_searcher
 
     # Mesos dependencies
-    dnf -y install apr-devel apr-util-devel cyrus-sasl-devel cyrus-sasl-md5    \
+    yum -y install apr-devel apr-util-devel cyrus-sasl-devel cyrus-sasl-md5    \
                    libblkid-devel libcurl-devel libevent-devel libnl3-devel    \
                    openssl-devel python-devel redhat-rpm-config                \
                    subversion-devel xfsprogs-devel python-boto
-    dnf -y install java-1.8.0-openjdk-devel maven
+    yum -y install java-1.8.0-openjdk-devel maven
 
     # Test dependencies
-    dnf -y install ethtool logrotate nmap-ncat perf
+    yum -y install ethtool logrotate nmap-ncat perf
 
     # Enable additional filesystems
     echo "overlay" > /etc/modules-load.d/overlayfs.conf
     echo "xfs" > /etc/modules-load.d/xfs.conf
 
     # Enable Docker
-    curl -fsSL https://get.docker.com/ | sh
+    curl -sSL https://get.daocloud.io/docker | sh
 
-    mkdir -p /etc/systemd/system/docker.service.d
-    cat > /etc/systemd/system/docker.service.d/overrides.conf <<EOF
-[Service]
-ExecStart=
-ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver=overlay
-EOF
-
-    systemctl enable docker.service
+    sudo cp -n /lib/systemd/system/docker.service /etc/systemd/system/docker.service
+    sudo sed -i "s|ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --storage-driver=overlay --registry-mirror=https://vwrzfgqh.mirror.aliyuncs.com|g" /etc/systemd/system/docker.service
+    sudo systemctl daemon-reload
+    sudo service docker restart
   SHELL
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
