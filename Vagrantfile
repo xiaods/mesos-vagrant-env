@@ -1,8 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$vagrant_mem = 4096
-$vagrant_cpus = 2
+$vagrant_mem = 8192
+$vagrant_cpus = 8
 $local_mesos_dir = "/Users/xiaods/Documents/Code/mesos"
 
 Vagrant.configure(2) do |config|
