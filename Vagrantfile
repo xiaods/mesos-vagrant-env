@@ -3,7 +3,7 @@
 
 $vagrant_mem = 8192
 $vagrant_cpus = 8
-$local_mesos_dir = "/Users/xiaods/Documents/Code/mesos"
+$local_mesos_dir = "/Users/xiaods/Documents/Code/mesos-projects/mesos"
 
 Vagrant.configure(2) do |config|
   config.vm.box = "centos/7"
