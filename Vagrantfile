@@ -34,7 +34,7 @@ Vagrant.configure(2) do |config|
     yum -y install apr-devel apr-util-devel cyrus-sasl-devel cyrus-sasl-md5    \
                    elfutils-libelf-devel libblkid-devel libcurl-devel          \
                    ibevent-devel libnl3-devel openssl-devel python-devel      \
-                   redhat-rpm-config subversion-devel xfsprogs-devel
+                   redhat-rpm-config subversion-devel xfsprogs-devel libevent-devel
 
     yum -y install java-1.8.0-openjdk-devel maven
 
@@ -42,25 +42,19 @@ Vagrant.configure(2) do |config|
     yum -y install ethtool logrotate nmap-ncat perf
 
     # Enable Docker
-    curl -sSL https://get.daocloud.io/docker | sh
+    yum -y install docker-engine
 
     sudo cp -n /lib/systemd/system/docker.service /etc/systemd/system/docker.service
-    sudo sed -i "s|ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --storage-driver=overlay2 --registry-mirror=https://vwrzfgqh.mirror.aliyuncs.com|g" /etc/systemd/system/docker.service
+    sudo sed -i "s|ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --storage-driver=overlay --registry-mirror=https://vwrzfgqh.mirror.aliyuncs.com|g" /etc/systemd/system/docker.service
     sudo systemctl daemon-reload
     sudo service docker restart
     sudo usermod -aG docker vagrant
   SHELL
 
-   config.vm.provision "shell", inline: <<-SHELL
-     # Sysdig
-     curl -s https://s3.amazonaws.com/download.draios.com/stable/install-sysdig | bash
-   SHELL
-
-  config.vm.provision "shell", privileged: false, inline: <<-SHELL
-    cd ~
-    mkdir build
-    cd build
-    /mesos/configure --disable-python --disable-java --enable-debug \
-                     --enable-libevent --enable-ssl
-  SHELL
+  # config.vm.provision "shell", privileged: false, inline: <<-SHELL
+  #   cd ~
+  #   mkdir build
+  #   cd build
+  #   /mesos/configure --disable-python --disable-java --enable-debug
+  # SHELL
 end
