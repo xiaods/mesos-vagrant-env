@@ -15,9 +15,3 @@ A Mesos development environment for Vagrant.
 ```
 
 #Troubleshooting
-
-* Case 0: missing mesos-slave.sh in build folder
-```
-# cd /mesos
-# autoeconf -ivf
-```
