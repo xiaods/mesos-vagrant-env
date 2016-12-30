@@ -3,7 +3,7 @@ A Mesos development environment for Vagrant.
 
 # Prerequirements
 ```
-#vagrant plugin install vagrant-bindfs
+# vagrant plugin install vagrant-bindfs
 ```
 
 

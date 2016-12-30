@@ -38,6 +38,9 @@ Vagrant.configure(2) do |config|
 
     yum -y install java-1.8.0-openjdk-devel maven
 
+    # Install development tools
+    yum groupinstall "Development Tools"
+
     # Test dependencies
     yum -y install ethtool logrotate nmap-ncat perf
 
