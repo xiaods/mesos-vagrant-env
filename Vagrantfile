@@ -28,8 +28,17 @@ Vagrant.configure(2) do |config|
   config.bindfs.bind_folder "/opt/mesos", '/mesos'
 
   config.vm.provision "shell", inline: <<-SHELL
+    # 禁用 fastestmirror 插件
+    sed -i.backup 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf
+    # 使用阿里云镜像
+    wget -O /etc/yum.repos.d/CentOS-Base-aliyun.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+    # EPEL aliyun
+    wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+    # yum update
+    yum -y update
+
     # Development tools
-    yum -y install automake ccache cmake gcc-c++ git libtool patch the_silver_searcher
+    yum -y install automake ccache cmake gcc-c++ git libtool patch the_silver_searcher vim
 
     # Mesos dependencies
     yum -y install apr-devel apr-util-devel cyrus-sasl-devel cyrus-sasl-md5    \
@@ -45,11 +54,15 @@ Vagrant.configure(2) do |config|
     # Test dependencies
     yum -y install ethtool logrotate nmap-ncat perf
 
+    #ruby source
+    gem source -r https://rubygems.org/
+    gem source -a http://mirrors.aliyun.com/rubygems/
+
     # Enable Docker
-    yum -y install docker-engine
+    curl -sSL https://get.daocloud.io/docker | sh
 
     sudo cp -n /lib/systemd/system/docker.service /etc/systemd/system/docker.service
-    sudo sed -i "s|ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --storage-driver=overlay --registry-mirror=https://vwrzfgqh.mirror.aliyuncs.com|g" /etc/systemd/system/docker.service
+    sudo sed -i.backup "s|^ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --storage-driver=overlay --registry-mirror=https://vwrzfgqh.mirror.aliyuncs.com|" /etc/systemd/system/docker.service
     sudo systemctl daemon-reload
     sudo service docker restart
     sudo usermod -aG docker vagrant
