@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 $vagrant_mem = 8192
-$vagrant_cpus = 8
+$vagrant_cpus = 4
 $local_mesos_dir = "/Users/xiaods/Documents/Code/mesos-projects/mesos"
 
 Vagrant.configure(2) do |config|
@@ -20,6 +20,8 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.network "forwarded_port", guest: 5050, host: 5050
+  config.vm.network "forwarded_port", guest: 5051, host: 5051
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
   config.vm.network "private_network", ip: "172.28.128.3"
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
