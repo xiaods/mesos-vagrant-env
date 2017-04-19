@@ -29,6 +29,8 @@ Vagrant.configure(2) do |config|
 
   config.bindfs.bind_folder "/opt/mesos", '/mesos'
 
+  config.vm.provision :shell, :inline => "sudo rm /etc/localtime && sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime", run: "always"
+
   config.vm.provision "shell", inline: <<-SHELL
     # 禁用 fastestmirror 插件
     sed -i.backup 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf
